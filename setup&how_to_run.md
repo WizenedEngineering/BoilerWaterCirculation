@@ -20,7 +20,7 @@ Finally, the general data like drum pressure, calculation method, tube roughness
 
 In the second step the calculation program "wsc.exe" can be started. 
 
-###The file structure
+### The file structure
 
 The program files "dxf2wsc" as well as "wsc" should be in same directory. The name or location of this main directory doesn't matter. Let's call it "Boiler Circulation". What matters is the directory structure below. 
 We should have one subdirectory with the name "WSCDATA". Within this directory each project is situated in a different subdirectory. Lets call it "Boiler1", "Boiler2" (certainly you would prefer to use more descriptive name like the real project name. The directory "Boiler1" etc. contains all the data, like .dxf file of input data, the circulation input data file, the result files, and the criteria .dxf files (and some other intemediate files that helps tracking, if some problems occur).   
@@ -35,7 +35,7 @@ We should have one subdirectory with the name "WSCDATA". Within this directory e
 |Boiler2 | Boiler2.dxf, Later on: Boiler2.dat, Boiler2.res (the result txt file) and some .dxf files|
 | ... | ... |
 
-###The program
+### The program
 
 "dxf2wsc.exe" as well as the main calculation program "wsc.exe" are console applications. (Up to now) there is no window wrapper. 
 
@@ -127,7 +127,7 @@ The starting values the flow in different branches are based on the circulation 
 
 After getting all input data the program writes the data to a data file in WSC data format, f.i. "Boiler2.dat". Each tube and each start/end point get a number that is further used. To identify the position of say "tube 537" or "point 486" another .dxf file "Boiler2_TubeNo.dxf" will be written. You can open this file with your CAD Program. The tube number is given in the layer of this tube (each tube has a separate layer). The points are represented by small crosses. Also the number is given in the layer.  
 
-###Bidrum boiler (!experimental!)
+### Bidrum boiler (!experimental!)
 
 "wsc.exe" can also calculate bidrum boilers. This is regarded as experimental because if the boiler has only heated downcomers the number of downcomers have to be given by the inlet enthalpy in the downcomer tubes (see below). This is not balanced with feed water flow and enthalpy. The number of downcomers is not calculated automatically.  
 
@@ -147,7 +147,7 @@ If "dxf2wsc" detects a big number of loose ends, it asks if we have a bidrum boi
 
 The drum pseudo tubes will be generated.
 
-##The .dxf file
+## The .dxf file
 
 The .dxf format was introduced to exchange drawing data between CAD programs and between CAD and other programs. It is a readable text format with a big number of lines.  
 
@@ -195,7 +195,7 @@ The different numbers are separated by underscores. "front wall_60.3_4.5_36_1_0_
 *tube inlet enthalpy* this is for bidrum boilers. To avoid steaming in heated downcomers we have to make sure that at no place the water saturation enthalpy is exceeded. As by the tube length downwards the pressure goes up this is a tricky balance. To help in this matter the feed water line is close to the inlet of the downcomer tubes resulting in an inlet enthalpy below drum water saturation enthalpy.   
 This number is the difference to drum water enthalpy. Bidrum heated downcomer should have a negative number, say -5 or -10. This number need to be verified after calculation of circulation.  
 
-###The data file
+### The data file
 
 "wsc.exe" needs its own input format. "dxf2wsc.exe" reads the .dxf file and finally writes the file, f.i."Boiler2.dat".
 
@@ -252,9 +252,9 @@ second line
 | OCSCenterX | x-coordinate center of arc |
 | OCSCenterY | y-coordinate center of arc |
 | OCSCenterZ | z-coordinate center of arc |
-| Nx | x-component of normal vector |
-| Ny | y-component of normal vector |
-| Nz | z-component of normal vector |
+| Nx | x-component of normal vector of arc |
+| Ny | y-component of normal vector of arc |
+| Nz | z-component of normal vector of arc |
 
 OSC... to Nz are data needed to write dxf files for the final results. They are related to arc which have an object coordinate system. Those numbers are available from the original dxf file and are transferred not to be calculated again. 
 
