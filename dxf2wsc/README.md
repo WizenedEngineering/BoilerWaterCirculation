@@ -1,4 +1,4 @@
-## What's about ![Here should be the logo](doxygen/wsclogo.png)
+## What's about ![Here should be the logo](WSCLogo.png)
 
 ### Background
 
