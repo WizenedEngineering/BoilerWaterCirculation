@@ -73,13 +73,16 @@ If there is no error the basic data for the calculation are put in.
 
 In detail:
 
-1.maximum number of iterations\n
+1.maximum number of iterations
+
 the program "wsc.exe" calculates the flow in the different tubes in an iteration. This gives the maximum number of iterations. Usually the result or close to the result is got within 100 iteration steps.   
 
-2.tolerance\n
+2.tolerance
+
 If the difference of sum of all flows between this and the last iteration step is below this tolerance, the calculation will be stopped. Another stopping criterion is the maximum percentual flow difference in the branches. A number between 0.1 and 1. is a good starting point.
  
-3.control parameter for protocol file\n 
+3.control parameter for protocol file
+
 If there is a problem during calculation the program stops (leaving sometimes cryptic messages like "Error in H2O.enthalpy t < 0 degC") This example means that the function for water and steam properties should calculate the enthalpy at a temperature below freezing point. This function doesn't know which other function called it and why and where it got a temperature below 0 degC. For this reason part of the calculation process can be written to a protocol file, named f.i. "Boiler2.pro". As writing everything can produce **HUGE** files that are even unreadable, certain subset can be written.  
 | show | index |
 | ----------- | ----------- |
@@ -97,7 +100,8 @@ If there is a problem during calculation the program stops (leaving sometimes cr
 |more info reversal of flow direction in branches and tubes | 18 |
 |everything (careful, protocol file can get **REALLY HUGE**) | 20 |
 
-4.calculation method for 2-phase density and pressure drop\n
+4.calculation method for 2-phase density and pressure drop
+
 Unfortunately there is no universal formula to calculate the density and dynamic pressure drop of 2-phase water-steam flow. Different authors came up with different formulae and consequently the results also differ. Several models were built in. Some authors only handle void fraction, density. In this case the dynamic pressure drop is calculated according VDI Heat Atlas (2nd edition).
 
 | calculation method | index |
@@ -110,19 +114,23 @@ Unfortunately there is no universal formula to calculate the density and dynamic
 
 5.drum pressure in MPag
 
-6.tube roughness in mm\n
+6.tube roughness in mm
+
 It's the tube roughness, new tubes with magnetite layer it's ~0.04 mm. For corroded tubes this can go up.\n 
 
-7.LevelFactor between highest and lowest heated point, 0 ... 1\n 
+7.LevelFactor between highest and lowest heated point, 0 ... 1
+
 In this program version downcomers are not heated (bidrum see below). As there are other connecting tubes that are also not heated there has to be another criterion for downcomer branches. They have to pass through a horizontal plane which elevation is given by this factor. Plane passing through lower distribution headers = 0. Plane passing through upper headers = 1. The factor has to be chosen that no other un-heated connection tubes pass through this plane.
 
-8.Water level in drum, difference to drum center in mm\n
+8.Water level in drum, difference to drum center in mm
+
 The water level in steam drum is given as difference to drum center. If water level is above to number is positive, if below negative.
 
-9.Resistance of drum internals in kPa\n
+9.Resistance of drum internals in kPa
 Drum internals like baffles or cyclones cause a pressure drop that influences the water circulation.
 
-10.Circulation ratio for start values \n
+10.Circulation ratio for start values
+
 The starting values the flow in different branches are based on the circulation ratio. In this case an overall circulation ratio is used. A number between 10 and 30 would be a good initial guess. Certainly, the circulation ratio for each tube will be calculated for each tube during the iteration. 
 
 After getting all input data the program writes the data to a data file in WSC data format, f.i. "Boiler2.dat". Each tube and each start/end point get a number that is further used. To identify the position of say "tube 537" or "point 486" another .dxf file "Boiler2_TubeNo.dxf" will be written. You can open this file with your CAD Program. The tube number is given in the layer of this tube (each tube has a separate layer). The points are represented by small crosses. Also the number is given in the layer.  
