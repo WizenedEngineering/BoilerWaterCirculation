@@ -1,0 +1,14 @@
+maximum number of iterations 100 
+tolerance                    0.1
+control parameter for
+protocol file                0
+calculation method           J
+pressure [MPa(g)]            5.0
+tube roughness [mm]          0.04 
+downcomer level factor       0.5
+distance of water level in
+drum [mm]                    0
+resistance of 
+drum internals [kPa]         1
+start value for 
+circulation ratio            20

@@ -30,12 +30,10 @@ int saveFlow() {
 	else {
 		for (const auto& iBranch : Branches) {
 			if (iBranch.NoChanges % 2) {
-				outData << iBranch.Number << "    " << -iBranch.g << " dynLin " << iBranch.dPLinear << " dPConstant "
-					<< iBranch.dPConstant << " gNew " << iBranch.gNew << " dpdyn " << iBranch.dPdyn << " dpstat " << iBranch.dPstat << "\n";
+				outData << iBranch.Number << "    " << -iBranch.g << "\n";
 			}
 			else {
-				outData << iBranch.Number << "    " << iBranch.g << " dynLin " << iBranch.dPLinear << " dPConstant "
-					<< iBranch.dPConstant << " gNew " << iBranch.gNew << " dpdyn " << iBranch.dPdyn << " dpstat " << iBranch.dPstat << "\n";
+				outData << iBranch.Number << "    " << iBranch.g << "\n";
 			}
 		}
 		outData.close();

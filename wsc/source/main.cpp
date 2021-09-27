@@ -68,8 +68,8 @@ int main(int argc, char** argv) {
 		cout << "\nProject name : ";
 		cin >> Project;
 	}
-	PathFile = "..\\..\\WSCDATA\\" + Project + "\\" + Project;
-//	PathFile = "WSCDATA\\" + Project + "\\" + Project;
+//	PathFile = "..\\..\\WSCDATA\\" + Project + "\\" + Project;
+	PathFile = "WSCDATA\\" + Project + "\\" + Project;
 	protname = PathFile + ".pro";
 	cout << protname;
 	// Set exceptions to be thrown on failure

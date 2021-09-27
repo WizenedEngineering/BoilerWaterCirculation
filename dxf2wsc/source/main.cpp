@@ -536,9 +536,9 @@ int main(int argc, char** argv) {
 		cout << "\nProject name : ";
 		cin >> Project;
 	}
-		filename = "..\\WSCDATA\\" + Project + "\\" + Project;
+//		filename = "..\\WSCDATA\\" + Project + "\\" + Project;
  //    filename = "..\\..\\WSCDATA\\" + Project + "\\" + Project;
-//	filename = "WSCDATA\\" + Project + "\\" + Project;
+	filename = "WSCDATA\\" + Project + "\\" + Project;
 	readfile = filename + ".dxf";
 	writefile = filename + ".dat";
 	/*
