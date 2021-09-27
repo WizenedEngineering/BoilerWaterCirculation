@@ -1,4 +1,4 @@
-# Boiler Water Circulation ![Here should be the logo](wsc/doxygen/wsclogo.png)
+# Boiler Water Circulation ![Here should be the logo](wsclogo.png)
 
 The program calculates the flow in the network of tubes that represent a boiler. It calculates the densities (as driving force) and resistances. The resulting flow will be compared to some criteria for safe flow. 
 
