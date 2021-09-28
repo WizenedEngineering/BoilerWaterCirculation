@@ -1,6 +1,6 @@
 # Boiler Water Circulation ![Here should be the logo](WSCLogo.png)
 
-The program calculates the flow in the network of tubes that represent a boiler. It calculates the densities (as driving force) and resistances. The resulting flow will be compared to some criteria for safe flow. 
+The program calculates the flow in the network of tubes that represent a boiler. It calculates the densities (as driving force) and resistances. The resulting flow will be compared to some criteria for safe flow. More information in [what_s_about.md](what_s_about.md) 
 
 The calculation is done on a network of tubes limited only by the storage capacity of the computer. Test cases with 3000+ tubes have been calculated. 
 
@@ -39,6 +39,8 @@ Copy the resulting "wsc.exe" to your working directory (see above)
 
 "dxf2wsc" doesn't rely on *eigen*. Therefore it's not needed in the search path.  
 
+More information in [setup&how_to_run.md](setup&how_to_run.md).
+
 ### Running the tests
 
 Copy the testfile (testfile.dxf and testfile.readme) to (your_folder_name\WSCDATA\testfile\testfile.dxf). Open a console, f.i. cmd or PowerShell. Run "dxf2wsc.exe" and give the project name "testfile". Additional data like pressure etc. can be found in "testfile.readme". 
@@ -68,7 +70,7 @@ See also the list of [contributors](https://github.com/WizenedEngineering/Boiler
 
 ### License
 
-This project is licensed under the European Union Public Licence (EUPL), Version 1.2 or later - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the European Union Public Licence (EUPL), Version 1.2 or later - see the [License.txt](License.txt) file for details
 
 ### Acknowledgments
 
