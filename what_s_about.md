@@ -63,6 +63,8 @@ After a successful calculation dxf-files for the different results are written. 
 
 This program is intended to calculate a stable operating condition. Load or pressure changes over a short time can also cause problems with the water circulation. Those cases are not covered by this program. 
 
+By now, only boilers with downcomers connected to steam drum can be calculated. The inlet enthalpy is saturated water enthalpy or a value given by the user (for bidrum boilers). Any boilers with downcomers connected to headers at highest level or intermediate levels need a model for the steam content that goes down. Such a model is not implemented yet. 
+
 ### Bidrum boilers
 The program is intended to calculate the water circulation in single drum boilers with unheated downcomers. However, it is even possible to calculate bidrum boilers, i.e. the downcomers are heated. In this case the tubes that should act as downcomer should be connected directly to steam drum and should have a given inlet enthalpy below saturated water enthalpy. Typically, in bidrum boilers with heated downcomers the feedwater pipe is adjacent to the downcomer inlet. The mixture enthalpy between drum water and feed water should assure that there is no evaporation in the downcomers. 
 
