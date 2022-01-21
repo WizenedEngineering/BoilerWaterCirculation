@@ -1,7 +1,25 @@
-/*     ----------------------------------------------------- */
-/*     function to for safety criteria of tube               */
-/*     ----------------------------------------------------- */
-//#include "stdafx.h"
+/*
+* function to determine safety factor against different criteria
+*
+* VDI Heat Atlas divides the range of mass velociy and pressure into 4 regions and recommends a method for each region
+* Those methods are:
+* Korneev for horizontal/inclined heated tubes
+* Taitel-Dukler and Steiner for flow separation (only critical in heated tubes)
+* Kon'kov for critical steam quality
+* Doroshchuk for critical steam quality
+* Katto-Ohno for critical steam quality
+* Groeneveld for critical heat flux
+* Kon'kov has following limitation: Dia < 33mm, MassVel > 200 kg/m2s; outside the limitation it will be disregarded
+* Katto-Ohno is only valid for xIn <= 0
+*
+* the minimum safety factor is used
+* Author: Rainer_Jordan@<very, very warm>mail.com
+* Licence: 
+* Licensed under the European Union Public Licence (EUPL), Version 1.2 or later
+* date: September 2021
+*/
+
+#include "stdafx.h"
 
 #include "CommonHeader.h"
 
@@ -20,7 +38,7 @@ void _tube::Criteria() {
 	double enthWSat = H2O::enth(tSat, pMPa, WATER);
 	double enthSSat = H2O::enth(tSat, pMPa, STEAM);
 	double deltaEnthEvap = enthSSat - enthWSat;
-	SafetyFactor = 100.;
+	SafetyFactor = 10.;
 	//   prot <<"pMPa "<<pMPa<< " q " << q << " HeatFlux " << HeatFlux  << " xOut " << xOut << endl;
 	/// only heated tubes are checked 
 	if (q > 1e-3 && xOut > 1.e-6 && xOut < 1.) {
@@ -45,7 +63,19 @@ void _tube::Criteria() {
 					VelWmin = VelWmin * (1. - 7.5e-3 * pMPa * 10.);
 				}
 			}
-			SafetyFactor = fmin(VelW / VelWmin, SafetyFactor);
+			SafetyKorneev = VelW / VelWmin;
+			SafetyFactor = fmin(SafetyKorneev, SafetyFactor);
+
+// in horizontal heated tubes (angle to horizontal < 10 deg) the flow should not be stratified/wavy or mist
+			// Taitel-Dukler
+			if (fabs(Height / Length) < 0.17365) {//horizontal (< 10 deg)
+				SafetyTaitel_Dukler = Taitel_Dukler(pPaOut, xOut);
+				SafetyFactor = fmin(SafetyTaitel_Dukler, SafetyFactor);
+
+				// Steiner
+				SafetySteiner = Steiner(pPaOut, xOut);
+				SafetyFactor = fmin(SafetySteiner, SafetyFactor);
+			}
 		}
 		else { // vertical tubes
 /**
@@ -66,8 +96,9 @@ void _tube::Criteria() {
 				else {
 					xCrit = pow(HeatFlux, -.125) * 32.302 * pow(MassVel, -1. / 3.) *
 						pow(Dia * 1e3, -.07) * exp(pMPa * 10. * -.00795);
-				}
-				SafetyFactor = fmin(SafetyFactor, xCrit / xOut);
+				}		
+				SafetyKonkov = xCrit / xOut;
+				SafetyFactor = fmin(SafetyFactor, SafetyKonkov);
 			}
 			/** for mass velocity > 500 and pressure > 2.9 MPa -> Film boiling according Doroshchuk */
 			if (MassVel >= 500. && (pMPa >= 2.9 && pMPa <= 20.) && (Dia >= .004
@@ -77,7 +108,8 @@ void _tube::Criteria() {
 				xCrit = (log(MassVel / 1e3) * (pred * .68 - .3) - log(HeatFlux * 1e3) + log(c)) /
 					(log(MassVel / 1e3) * 1.2 + 1.5);
 				if (xCrit > 0. && xCrit < 1.) {
-					SafetyFactor = fmin(SafetyFactor, xCrit / xOut);
+					SafetyDoroshchuk = xCrit / xOut;
+					SafetyFactor = fmin(SafetyFactor, SafetyDoroshchuk);
 				}
 			}
 
@@ -137,12 +169,14 @@ void _tube::Criteria() {
 					}
 				}
 				xCrit = hf * (1. - k * xIn) * 4. * relLength + xIn;
-				SafetyFactor = fmin(SafetyFactor, xCrit / xOut);
+				SafetyKatto_Ohno = xCrit / xOut;
+				SafetyFactor = fmin(SafetyFactor,SafetyKatto_Ohno);
 			}
 			/// 3) comparing to critical heat flux according to Groeneveld table
 			if (HeatFlux > 1.) {
 				//            prot << " chf " << chftable(pMPa, rhoW, rhoS) << " HeatFlux " << HeatFlux  << endl;
-				SafetyFactor = fmin(chftable(pMPa, rhoWSat, rhoSSat) / HeatFlux, SafetyFactor);
+				SafetyGroeneveld = chftable(pMPa, rhoWSat, rhoSSat) / HeatFlux;
+				SafetyFactor = fmin(SafetyGroeneveld, SafetyFactor);
 			}
 		}
 	}

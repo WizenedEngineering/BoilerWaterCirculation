@@ -29,7 +29,7 @@
  * \param mode what should be shown in .dxf file
  * \return int error
  */
-//#include "stdafx.h"
+#include "stdafx.h"
 #undef MAINFUNCTION
 #include "CommonHeader.h"
 
@@ -71,7 +71,7 @@ extern _point OCS2WCS(double OCSCenterX, double OCSCenterY, double OCSCenterZ,
 		  //    red = stratified, wavy or mist, green = slug,plug, bubble or annular
 	// ShowMode::DPdynPerLength   : showing tubes, coloring according dpdyn / length(to find bottle neck)
 		 //    rainbow from blue (lowest) to red (highest)
-	// ShowMode::ResistanceFactor : showing tubes, coloring according dpdyn / length / mass velocity(to find bottle neck)
+	// ShowMode::ResistanceFactor : showing tubes, coloring according dpdyn / length / mass velocity^2(to find bottle neck)
 		 //    rainbow from blue (lowest) to red (highest)
 ) {
 	string LayerName, content;
@@ -81,6 +81,7 @@ extern _point OCS2WCS(double OCSCenterX, double OCSCenterY, double OCSCenterZ,
 	unsigned short color = 0, TEN = 10;
 	//center point of line
 	double PointMidX, PointMidY, PointMidZ, dx, dy, dz;
+	double OCSMidAngle;
 	_point* PtIn;
 	_point* PtOut;
 	// font height
@@ -186,15 +187,19 @@ extern _point OCS2WCS(double OCSCenterX, double OCSCenterY, double OCSCenterZ,
 			if (!Branches[iTube.NbBr].isFlowSet2zero) {
 			   PtIn = &Points[iTube.PointIn];
 				PtOut = &Points[iTube.PointOut];
-				if (iTube.RadiusBend < 1.) {
+				if (iTube.RadiusBend < 1.) { // straight tube
 					PointMidX = (PtIn->xCoord + PtOut->xCoord) / 2.;
 					PointMidY = (PtIn->yCoord + PtOut->yCoord) / 2.;
 					PointMidZ = (PtIn->zCoord + PtOut->zCoord) / 2.;
 				}
-				else {
-					double EndAngle = iTube.OCSEndAngle;
-					if (fabs(EndAngle) < 1e-3) EndAngle = 360.;
-					double OCSMidAngle = (iTube.OCSStartAngle + EndAngle) / 2.;
+				else { // bend
+					if (iTube.OCSEndAngle - iTube.OCSStartAngle < 0.) {
+						 OCSMidAngle = (iTube.OCSStartAngle + iTube.OCSEndAngle+360.) / 2.;
+						if (OCSMidAngle > 360.) OCSMidAngle -= 360.;
+					}
+					else {
+						 OCSMidAngle = (iTube.OCSStartAngle + iTube.OCSEndAngle) / 2.;
+					}
 					_point WCSMidPoint = OCS2WCS(iTube.OCSCenterX, iTube.OCSCenterY, iTube.OCSCenterZ,
 							iTube.Nx, iTube.Ny, iTube.Nz, iTube.RadiusBend, OCSMidAngle);
 					PointMidX = WCSMidPoint.xCoord;
@@ -235,7 +240,8 @@ extern _point OCS2WCS(double OCSCenterX, double OCSCenterY, double OCSCenterZ,
 		for (const auto& iTube : Tubes) {
 			if (iTube.Dia < MinDrumDiameter) {
 				content = to_string(iTube.Number);
-				LayerName = "Tb " + content + " " + to_string(round(iTube.xOut * 1e3) / 1e3);
+				LayerName = "Tb " + content + " " + to_string(round(iTube.xOut * 1e3) / 1e3)
+					+ " CR " + to_string(round(10./iTube.xOut)/ 10.);
 				color = 0;
 				if (!Branches[iTube.NbBr].isFlowSet2zero) {
 					if (iTube.xOut > 0.2) color = 1;
@@ -244,8 +250,8 @@ extern _point OCS2WCS(double OCSCenterX, double OCSCenterY, double OCSCenterZ,
 					else if (iTube.xOut > 0.05) color = 3;
 					else if (iTube.xOut > 0.0) color = 150;
 				}
-				// red = above 0.2, orange = between 0.2 ... 0.1, yellow = 0.1 ... 1/15,
-				// light green = 1/15...0.05, dark green < 0.05
+				// red = above 0.2 (CR: <5), orange = between 0.2 ... 0.1 (CR: 5...10), yellow = 0.1 ... 1/15 (CR: 10...15),
+				// light green = 1/15...0.05 (CR: 15...20), dark green < 0.05 (CR: >20)
 				error = DXFWriteTube(outData, iTube, handle,
 					LayerName, color,(!Branches[iTube.NbBr].isFlowSet2zero) );
 				if (error) return error;
@@ -261,9 +267,10 @@ extern _point OCS2WCS(double OCSCenterX, double OCSCenterY, double OCSCenterZ,
 				if (!Branches[iTube.NbBr].isFlowSet2zero) {
 					if (iTube.VoidFractionOut > 0.95) color = 1;
 					else if (iTube.VoidFractionOut > 0.85) color = 2;
-					else if (iTube.VoidFractionOut > 1e-6) color = 3;
+					else if (iTube.VoidFractionOut > 0.6) color = 3;
+					else if (iTube.VoidFractionOut > 1e-6) color = 150;
 					else color = 0;
-					// red = above 0.95, yellow = 0.85..0.95, green < 0.85
+					// red > 0.95, yellow > 0.85, light green > 0.6, dark green > 1e-6
 				}
 				error = DXFWriteTube(outData, iTube, handle,
 					LayerName, color,(!Branches[iTube.NbBr].isFlowSet2zero));
@@ -285,7 +292,7 @@ extern _point OCS2WCS(double OCSCenterX, double OCSCenterY, double OCSCenterZ,
 		for (const auto& iTube : Tubes) {
 			if (iTube.Dia < MinDrumDiameter) {
 				content = to_string(iTube.Number);
-				LayerName = "Tb " + content + " " + to_string(round(iTube.MassVel));
+				LayerName = "Tb " + content + " " + to_string(round(iTube.MassVel)) ;
 		   	color = 0;
 				if (!Branches[iTube.NbBr].isFlowSet2zero) {
 					for (unsigned short ic = 1; ic <= 17; ic++) {
@@ -389,6 +396,7 @@ extern _point OCS2WCS(double OCSCenterX, double OCSCenterY, double OCSCenterZ,
 		}
 		break;
 	case ShowMode::DPdynPerLength:
+	//
 		for (const auto& iTube : Tubes) {
 			if (iTube.Dia < MinDrumDiameter) {
 				if (!(iTube.DiaOrificeIn > 0. || iTube.DiaOrificeOut > 0.)) { //disregard orifices

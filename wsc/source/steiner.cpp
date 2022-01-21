@@ -1,8 +1,21 @@
-//#include "stdafx.h"
+/* Determines the flow pattern in horizontal tubes
+* according the flow chart by Steiner
+*
+* Source: VDI Heat Atlas, Second Edition, H3.1
+*
+*param[in] pPa Pressure[Pa]
+*param[in] quality steam mass content, steam quality[-]
+*Author: Rainer_Jordan@<very, very warm>mail.com
+*Licence:
+* Licensed under the European Union Public Licence(EUPL), Version 1.2 or later
+* date: September 2021
+*/
+
+#include "stdafx.h"
 
 #include "CommonHeader.h"
 
-void _tube::Steiner(
+double _tube::Steiner(//return safety factor against flow separation FrGm / FrGmlim 
 	double pPa, // Pressure in Pa
 	double quality // steam quality, steam mass content
 ) {
@@ -171,28 +184,29 @@ void _tube::Steiner(
 		if (ReLFrG <= ReLFrGlim) {
 			//             prot << "stratified" << endl;
 			steiner = FlowPattern::stratified; //stratified flow
-			return;
+			return 0.;
 		}
 		double FrGmlim = 16. * AG * AG * AG / (M_PI * M_PI * sqrt(1. - (2. * hL - 1.) * (2. * hL - 1.))) *
 			(M_PI * M_PI / (25. * hL * hL) / WeFrL + 1. / cosTheta);
 		//	prot << " FrGm " << FrGm << " FrGmlim " << FrGmlim << endl;
-		if (FrGm <= FrGmlim) {
+		double Safety = FrGm / FrGmlim;
+		if (Safety <= 1.) {
 			//          prot << "wavy" << endl;
 			steiner = FlowPattern::wavy; //wavy flow
-			return;
+			return Safety;
 		}
 		double FrEuLlim = 128. * AG * AL * AL / (M_PI * M_PI * Ui);
 		//		prot << " FrEuL " << FrEuL << " FrEuLlim " << FrEuLlim << endl;
 		if (FrEuL >= FrEuLlim) {
 			//               prot << "bubble" << endl;
 			steiner = FlowPattern::bubble; // bubble flow
-			return;
+			return Safety;
 		}
 		if ((X >= 0.34 && ReL >= 1187. && ReG >= 1187. && FrGm > FrGmlim) ||
 			(X >= 0.51 && ReL < 1187. && ReG >= 1187. && FrGm >= FrGmlim)) {
 			//                   prot << "plug" << endl;
 			steiner = FlowPattern::plugSlug; //plug or slug flow
-			return;
+			return Safety;
 		}
 		double zetaPh = (1.138 + 2. * log(M_PI / (1.5 * AL)));
 		zetaPh = 1. / zetaPh / zetaPh;
@@ -201,13 +215,13 @@ void _tube::Steiner(
 		if (X < 0.51 && FrGm >= FrGmlim2) {
 			//              prot << "mist" << endl;
 			steiner = FlowPattern::mist; //mist flow
-			return;
+			return 0.;
 		}
 		if (X < 0.51 && FrGm > FrGmlim && FrGm < FrGmlim2) {
 			//               prot << "annular" << endl;
 			steiner = FlowPattern::annular; //annular flow
-			return;
+			return Safety;
 		}
 	}
-	return;
+	return 10.;
 }

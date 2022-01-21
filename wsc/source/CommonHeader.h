@@ -347,8 +347,15 @@ public:
     double MassVel;        ///< mass velocity in tube [kg/m2 s]
     //   double Reynolds; //Reynolds number
     double velWater;       ///< velocity if density is water density ("superficial" water velocity)[m/s]
-    double SafetyFactor;   ///< safety factor against flow separation (should be higher than 1)
-	 FlowPattern steiner;   ///< flow pattern according Steiner
+    double SafetyFactor;   ///< safety factor against flow separation or overheating (should be higher than 1)
+    double SafetyKorneev;   ///< safety factor against overheating according to Korneev
+    double SafetyTaitel_Dukler;  ///< safety factor against flow separation according to Taitel-Dukler
+    double SafetySteiner;   ///< safety factor against flow separation according to Steiner
+    double SafetyKonkov;   ///< safety factor against overheating according to Kon'kov
+    double SafetyDoroshchuk;   ///< safety factor against overheating according to Doroshchuk
+    double SafetyKatto_Ohno;   ///< safety factor against overheating according to Katto-Ohno
+    double SafetyGroeneveld;   ///< safety factor against overheating according to Groeneveld
+    FlowPattern steiner;   ///< flow pattern according Steiner
     double OCSStartAngle;  ///< start angle of arc (bend) in OCS, needed for .dxf file
     double OCSEndAngle;    ///< start angle of arc (bend) in OCS, needed for .dxf file
     double OCSCenterX;     ///< x-coordinate of arc (bend) center point in OCS, needed for .dxf output file
@@ -406,7 +413,14 @@ public:
         Flow = 0.;
         MassVel = 0.;
         velWater = 0.;
-        SafetyFactor = 0.;
+        SafetyFactor = -10.;
+        SafetyKorneev = -10.;
+        SafetyTaitel_Dukler = -10.;  
+        SafetySteiner = -10.;   
+        SafetyKonkov = -10.;   
+        SafetyDoroshchuk = -10.;   
+        SafetyKatto_Ohno = -10.;   
+        SafetyGroeneveld = -10.;  
         steiner = FlowPattern::undetermined;
         OCSStartAngle = 0.;
         OCSEndAngle = 0.;
@@ -910,6 +924,8 @@ public:
 *
 * VDI Heat Atlas divides the range of mass velociy and pressure into 4 regions and recommends a method for each region\n
 * Those methods are:\n
+* Korneev for horizontal/inclined heated tubes\n
+* Taitel-Dukler and Steiner for flow separation (only critical in heated tubes)\n
 * Kon'kov for critical steam quality\n
 * Doroshchuk for critical steam quality\n
 * Katto-Ohno for critical steam quality\n
@@ -962,7 +978,24 @@ public:
 * Licensed under the European Union Public Licence (EUPL), Version 1.2 or later
 * \date   September 2021
 */
-    void Steiner ( double pPa, double quality );
+    double Steiner ( double pPa, double quality );
+ 
+/*!
+ * \brief determines the safety factor against wavy/stratified flow in horizontal tubes
+ *
+ * Determines the safety factor against wavy/stratified flow in horizontal tubes
+ * according the criterion by Taitel- Dukler
+ *
+ * Source:  A Model for Predicting Flow Regime Transitions in Horizontal and Near Horizontal Gas-Liquid Flow, Taitel,Y,Dukler,A.E. , AIChE Journal (Vol.22, No 1)
+ *
+ * \param [in] pPa Pressure [Pa]
+ * \param [in] quality steam mass content, steam quality [-]
+ * \author Rainer_Jordan@<very, very warm>mail.com
+ * #### Licence
+ * Licensed under the European Union Public Licence (EUPL), Version 1.2 or later
+ * \date   January 2022
+ */
+    double Taitel_Dukler(double pPa, double quality);
 
 /*!
 * \brief reverses flow direction in tube

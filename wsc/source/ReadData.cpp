@@ -10,7 +10,7 @@
 * Licensed under the European Union Public Licence (EUPL), Version 1.2 or later
 * \date   September 2021
 *********************************************************************/
-//#include "stdafx.h"
+#include "stdafx.h"
 #undef MAINFUNCTION
 #include "CommonHeader.h"
 
@@ -277,8 +277,8 @@ int readData() {
 				iTube->Nx = ArcNx;
 				iTube->Ny = ArcNy;
 				iTube->Nz = ArcNz;
-				if (fabs(EndAngle) < 1e-3) EndAngle = 360.;
 				iTube->beta = EndAngle - StartAngle; //in deg
+				if (iTube->beta < 0.) iTube->beta += 360.;
 				iTube->Length = iTube->beta * M_PI / 180. * iTube->RadiusBend;// in m
 			}
 			if (iTube->Length < 1e-3) {

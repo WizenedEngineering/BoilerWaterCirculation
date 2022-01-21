@@ -1,7 +1,7 @@
 /*! \file   SaveResults.cpp */
 
 
-//#include "stdafx.h"
+#include "stdafx.h"
 #include <cstdlib>
 #undef MAINFUNCTION
 #include "CommonHeader.h"
@@ -22,22 +22,15 @@ int SaveResults() {
 		cerr << rname << " : " << e.code().message() << endl;
 		exit(1);
 	}
-	result << "  iTb PtIn PtOut    g       xIn    xOut    void    beta     UorS HeatFlux" <<
-		"    dpIn     dpOut     dpdyn    dpstat   rhoIn  rhoOut" << //rhoMean
-		"     w    safety-  flow\n";
-	result << "                 [kg/s]     [%]     [%]     [%]                 [kW/m2]" <<
-		"      [Pa]      [Pa]      [Pa]      [Pa] [kg/m3] [kg/m3]" //[kg/m3]
-		<< "   [m/s]  factor  chart ";
+	result << "  iTb\tPtIn\tPtOut\tg\txIn\txOut\tvoid\tbeta\tUorS\tHeatFlux"
+		<<"\tdpIn\tdpOut\tdpdyn\tdpstat\trhoIn\trhoOut"
+		<< "\tw\tsafety-\tsafety\tsafety\tsafety\tsafety\tsafety\tsafety\tsafety\tflow\n";
+	result << "\t\t\t[kg/s]\t[%]\t[%]\t[%]\t\t\t[kW/m2]"
+		<<"\t[Pa]\t[Pa]\t[Pa]\t[Pa]\t[kg/m3]\t[kg/m3]"
+		<< "\t[m/s]\tfactor\tKorneev\tTaitel-Dukler\tSteiner\tKon'kov\tDoroshchuk\tKatto-Ohno\tGroeneveld\tchart";
 	result.setf(ios::fixed, ios::floatfield);
 	/// for each tube following data is saved:\n
 	for (auto& iTube : Tubes) {
-		//         prot << "iTb " << iTube.Number << " q " << iTube.q << " xOut "<<iTube.xOut<< endl;
-		//         if (iTube.xIn < 0.) {
-		//            iTube.xIn = 0.;
-		//         }
-		//         if (iTube.xOut < 0.) {
-		//            iTube.xOut = 0.;
-		//         }
 		iTube.Criteria();
 		iTube.Steiner(iTube.pPaOut, iTube.xOut);
 
@@ -59,40 +52,85 @@ int SaveResults() {
 		/// density at tube outlet (rhoOut) [kg/m3],\n
 		/// actual velocity at tube outlet (velOut) [m/s],\n
 		/// lowest safety factor against different criteria (SafetyFactor)[-],\n
+		/// safety factor following criterium of Korneev [-], \n
+		/// safety factor against flow separation following Taitel-Dukler [-], \n	
+		/// safety factor against flow separation following Steiner [-], \n
+		/// safety factor following criterium of Konkov [-], \n
+		/// safety factor following criterium of Doroshchuk [-], \n
+		/// safety factor following criterium of Katto-Ohno [-], \n
+		/// safety factor following criterium of Groeneveld [-], \n
 		/// flow pattern according to Steiner.
 
-		result << "\n" << setw(5) << iTube.Number
-			<< setw(5) << iTube.PointIn
-			<< setw(5) << iTube.PointOut
-			<< setw(8) << setprecision(2) << Branches[iTube.NbBr].g
-			<< setw(8) << setprecision(2) << iTube.xIn * 100.
-			<< setw(8) << setprecision(2) << iTube.xOut * 100.
-			<< setw(8) << setprecision(2) << iTube.VoidFractionOut * 100.
-			<< setw(8) << setprecision(2) << iTube.beta;
+		result << "\n" << setw(5) << iTube.Number << "\t"
+			<< setw(5) << iTube.PointIn << "\t"
+			<< setw(5) << iTube.PointOut << "\t"
+			<< setw(8) << setprecision(2) << Branches[iTube.NbBr].g / iTube.NoParallel << "\t"
+			<< setw(8) << setprecision(2) << iTube.xIn * 100. << "\t"
+			<< setw(8) << setprecision(2) << iTube.xOut * 100. << "\t"
+			<< setw(8) << setprecision(2) << iTube.VoidFractionOut * 100. << "\t"
+			<< setw(8) << setprecision(2) << iTube.beta << "\t";
 		if (iTube.UorS == USArrangement::S) {
-			result << "       S";
+			result << "       S" << "\t";
 		}
 		else if (iTube.UorS == USArrangement::U) {
-			result << "       U";
+			result << "       U" << "\t";
 		}
 		else {
-			result << "       -";
+			result << "       -" << "\t";
 		}
-		result << setw(8) << setprecision(2) << iTube.HeatFlux
-			<< setw(10) << setprecision(2) << iTube.dpIn
-			<< setw(10) << setprecision(2) << iTube.dpOut
-			<< setw(10) << setprecision(2) << iTube.dpdyn
-			<< setw(10) << setprecision(2) << iTube.dpstat
-			<< setw(8) << setprecision(2) << iTube.rhoIn
-			<< setw(8) << setprecision(2) << iTube.rhoOut
+		result << setw(8) << setprecision(2) << iTube.HeatFlux << "\t"
+			<< setw(10) << setprecision(2) << iTube.dpIn << "\t"
+			<< setw(10) << setprecision(2) << iTube.dpOut << "\t"
+			<< setw(10) << setprecision(2) << iTube.dpdyn << "\t"
+			<< setw(10) << setprecision(2) << iTube.dpstat << "\t"
+			<< setw(8) << setprecision(2) << iTube.rhoIn << "\t"
+			<< setw(8) << setprecision(2) << iTube.rhoOut << "\t"
 			//                << setw(8) << setprecision(2) << iTube.rhoMean
 			//<< setw(8) << setprecision(2) << iTube.velWater
-			<< setw(8) << setprecision(2) << iTube.velOut;
-		if (iTube.q > 0.) {
-			result << setw(8) << setprecision(2) << iTube.SafetyFactor;
+			<< setw(8) << setprecision(2) << iTube.velOut << "\t";
+		if (iTube.q > 0. && iTube.SafetyFactor > 0.) {
+			result << setw(8) << setprecision(2) << iTube.SafetyFactor << "\t";
 		}
 		else {
-			result << "       -";
+			result << "-" << "\t";
+		}
+		if (iTube.q > 0. && iTube.SafetyKorneev > 0.) {
+			result << setw(8) << setprecision(2) << iTube.SafetyKorneev << "\t";
+		}
+		else {
+			result << "-" << "\t";
+		}
+		if (iTube.q >0. && iTube.xOut > 1e-3 && fabs(iTube.Height / iTube.Length) < 0.174) {
+			result << setw(14) << setprecision(2) << iTube.SafetyTaitel_Dukler << "\t";
+			result << setw(8) << setprecision(2) << iTube.SafetySteiner << "\t";
+		}
+		else {
+			result << "-" << "\t" << "-" << "\t";
+		}
+		
+	if (iTube.q > 0. && iTube.SafetyKonkov > 0.) {
+		result << setw(8) << setprecision(2) << iTube.SafetyKonkov << "\t";
+		}
+		else {
+			result << "-" << "\t";
+		}
+	if (iTube.q > 0. && iTube.SafetyDoroshchuk > 0.) {
+		result << setw(11) << setprecision(2) << iTube.SafetyDoroshchuk << "\t";
+		}
+		else {
+			result << "-" << "\t";
+		}
+		if (iTube.q > 0. && iTube.SafetyKatto_Ohno > 0.) {
+			result << setw(11) << setprecision(2) << iTube.SafetyKatto_Ohno << "\t";
+		}
+		else {
+			result << "-" << "\t";
+		}
+		if (iTube.q > 0. && iTube.SafetyGroeneveld > 0.) {
+			result << setw(11) << setprecision(2) << iTube.SafetyGroeneveld << "\t";
+		}
+		else {
+			result << "-" << "\t";
 		}
 		if (iTube.xOut > 1e-3 && fabs(iTube.Height / iTube.Length) < 0.174) {
 			switch (iTube.steiner) {
@@ -131,14 +169,14 @@ int SaveResults() {
 	/// 9.)saving geometry to dxf-file coloring according dpdyn / length / mass velocity^2(it helps to identify bottle necks)\n
 	/// in dxf-files the flow direction is indicated by arrows in the centers of the tubes
 
-	Print2dxf(ShowMode::Flow);              // showing tubes, coloring according Flow 
+	Print2dxf(ShowMode::Flow);             // showing tubes, coloring according Flow 
 	Print2dxf(ShowMode::SafetyFactor);     // showing tubes, coloring according SafetyFactor
 	Print2dxf(ShowMode::SteamQuality);     // showing tubes, coloring according steam quality
 	Print2dxf(ShowMode::VoidFraction);     // showing tubes, coloring according void fraction
 	Print2dxf(ShowMode::MassVel);          // showing tubes, coloring according mass velocity
 	Print2dxf(ShowMode::Velocity);         // showing tubes, coloring according velocity
 	Print2dxf(ShowMode::FlowPattern);      // showing tubes, coloring according flow pattern(Steiner)
-	Print2dxf(ShowMode::DPdynPerLength);       // showing tubes, coloring according dpdyn / length(to find bottle neck)
+	Print2dxf(ShowMode::DPdynPerLength);   // showing tubes, coloring according dpdyn / length(to find bottle neck)
 	Print2dxf(ShowMode::ResistanceFactor); // showing tubes, coloring according dpdyn / length / mass velocity^2(to find bottle neck)
 
 	return 0;

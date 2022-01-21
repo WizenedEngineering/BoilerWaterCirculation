@@ -313,14 +313,16 @@ bool isTubeCorrect(double p1x, double p1y, double p1z, double p2x, double p2y, d
 	if (fabs(p2x - p1x) < 1. &&
 		fabs(p2y - p1y) < 1. &&
 		fabs(p2z - p1z) < 1.) {
-		cout << "zero length line (tube) found and ignored";
-		cout << "\nThe error occurred at about line " << NoLineDxf << " of dxf-file" << endl;
-		do {
-			cout << "please confirm [y] :";
-			cin >> confirm;
-		} while (confirm != 'y');
+		cout << "zero length or very short line (tube) found";
+		cout << "\nThe error occurred at coordinates x = " << p1x << " y = "<< p1y << " z = "<<p1z << endl;
+		cout << "\n check in error file ";
 		mTb--;
 		Tubes.pop_back();
+		dxfError = true;
+		center.xCoord = (p1x + p2x) / 2.;
+		center.yCoord = (p1y + p2y) / 2.;
+		center.zCoord = (p1z + p2z) / 2.;
+		TubeErrors.push_back(center);
 		return false; //read next line
 	}
 	// -------------------------------------------            

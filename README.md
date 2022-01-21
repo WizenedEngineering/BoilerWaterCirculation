@@ -14,7 +14,7 @@ Transient operation, like load or pressure changes, are not covered by this prog
 
 ### Getting Started
 
-Download the files "dxf2wsc.exe" and "wsc.exe" if you want to run this program under Windows. Copy it to one folder. A folder dedicated to this calculation would be a good idea. Set up the underlying file system as described in [mainpage] (/wsc2dxf/doxygen/mainpage.md). 
+Download the files "dxf2wsc.exe" and "wsc.exe" if you want to run this program under Windows. Copy it to one folder. A folder dedicated to this calculation would be a good idea. Set up the underlying file system as described in [setup&how_to_run](setup&how_to_run.md). 
 
 If you want to run the programs under a different operation system, you can compile it from source. Both programs are "console" programs. There is no specific windowing system involved. 
 
