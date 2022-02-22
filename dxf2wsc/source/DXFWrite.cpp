@@ -44,7 +44,7 @@ int DXFWrite(ostream& outData,
 	size_t iTb, iPt;
 	_tube* iTube;
 	//center point of line
-	double PointMidX, PointMidY, PointMidZ, dx, dy, dz;
+	double PointMidX, PointMidY, PointMidZ, dx, dy, dz, OCSMidAngle;
 	_point* PtIn;
 	_point* PtOut;
 	// font height
@@ -69,7 +69,7 @@ int DXFWrite(ostream& outData,
 		iTube = &Tubes[iTb];
 		PtIn = &Points[iTube->PointIn];
 		PtOut = &Points[iTube->PointOut];
-		if (iTube->RadiusBend < 1.) {
+		if (iTube->RadiusBend < 1.) { //straight tube
 			error = DXFWriteLine(outData, handle, LayerName, color,
 				PtIn->xCoord, PtIn->yCoord, PtIn->zCoord,
 				PtOut->xCoord, PtOut->yCoord, PtOut->zCoord);
@@ -77,13 +77,18 @@ int DXFWrite(ostream& outData,
 			PointMidY = (PtIn->yCoord + PtOut->yCoord) / 2.;
 			PointMidZ = (PtIn->zCoord + PtOut->zCoord) / 2.;
 		}
-		else {
+		else { //bend
 			error = DXFWriteArc(outData, handle, LayerName, color,
 				iTube->OCSCenterX, iTube->OCSCenterY, iTube->OCSCenterZ,
 				iTube->RadiusBend, iTube->Nx, iTube->Ny, iTube->Nz,
 				iTube->OCSStartAngle, iTube->OCSEndAngle);
-			if (fabs(iTube->OCSEndAngle) < 1e-3) iTube->OCSEndAngle = 360.;
-			double OCSMidAngle = (iTube->OCSStartAngle + iTube->OCSEndAngle) / 2.;
+			if (iTube->OCSEndAngle - iTube->OCSStartAngle < 0.) {
+				OCSMidAngle = (iTube->OCSStartAngle + iTube->OCSEndAngle + 360.) / 2.;
+				if (OCSMidAngle > 360.) OCSMidAngle -= 360.;
+			}
+			else {
+				OCSMidAngle = (iTube->OCSStartAngle + iTube->OCSEndAngle) / 2.;
+			}
 			_point WCSMidPoint = OCS2WCS(iTube->OCSCenterX, iTube->OCSCenterY, iTube->OCSCenterZ,
 				iTube->Nx, iTube->Ny, iTube->Nz, iTube->RadiusBend, OCSMidAngle);
 			PointMidX = WCSMidPoint.xCoord;
@@ -99,7 +104,7 @@ int DXFWrite(ostream& outData,
 		error = DXFWriteText(outData, handle, "Line number", color,
 			PointMidX, PointMidY, PointMidZ, height, content);
 	}
-	for (iPt = 0; iPt <=mPt; iPt++) {
+	for (iPt = 0; iPt <= mPt; iPt++) {
 		LayerName = "Pt " + iPt;
 		error = DXFWritePoint(outData, handle, LayerName, color,
 			Points[iPt].xCoord,

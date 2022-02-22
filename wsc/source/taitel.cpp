@@ -10,7 +10,7 @@
 * Licensed under the European Union Public Licence(EUPL), Version 1.2 or later
 * date January 2022
 */
-#include "stdafx.h"
+//#include "stdafx.h"
 
 #include "CommonHeader.h"
 

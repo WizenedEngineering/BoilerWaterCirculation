@@ -2,7 +2,7 @@
 // starting date August 1, 2016, 8:50 PM
 
 
-#include "stdafx.h"
+//#include "stdafx.h"
 #include <cstdlib>
 #define MAINFUNCTION
 #include "CommonHeader.h"

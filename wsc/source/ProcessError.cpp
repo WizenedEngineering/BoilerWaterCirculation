@@ -27,7 +27,7 @@ void processError(size_t iPt, const string& text) {
 		cout << "\n cannot open file " << writefile << endl;
 	}
 	else {
-		outData << "999\nDXF2WC\n  0\nSECTION\n  2\nCLASSES\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n";
+		outData << "999\nWSC_Error\n  0\nSECTION\n  2\nCLASSES\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n";
 		unsigned long long handle = 100ULL;
 		unsigned short color = 6;
 		DXFWriteLine(outData, handle, "PathError", color,

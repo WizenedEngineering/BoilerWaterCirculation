@@ -123,7 +123,7 @@ The water level in steam drum is given as difference to drum center. If water le
 Drum internals like baffles or cyclones cause a pressure drop that influences the water circulation.
 
 10.Circulation ratio for start values \n
-The starting values the flow in different branches are based on the circulation ratio. In this case an overall circulation ratio is used. A number between 10 and 30 would be a good initial guess. Certainly, the circulation ratio for each tube will be calculated for each tube during the iteration. 
+The starting values for the flow in different branches are based on the circulation ratio. In this case an overall circulation ratio is used. A number between 10 and 30 would be a good initial guess. Certainly, the circulation ratio for each tube will be calculated for each tube during the iteration.
 
 After getting all input data the program writes the data to a data file in WSC data format, f.i. "Boiler2.dat". Each tube and each start/end point get a number that is further used. To identify the position of say "tube 537" or "point 486" another .dxf file "Boiler2_TubeNo.dxf" will be written. You can open this file with your CAD Program. The tube number is given in the layer of this tube (each tube has a separate layer). The points are represented by small crosses. Also the number is given in the layer.  
 

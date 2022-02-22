@@ -11,7 +11,7 @@
 * date: September 2021
 */
 
-#include "stdafx.h"
+//#include "stdafx.h"
 
 #include "CommonHeader.h"
 

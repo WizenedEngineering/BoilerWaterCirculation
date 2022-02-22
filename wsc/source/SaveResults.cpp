@@ -1,7 +1,7 @@
 /*! \file   SaveResults.cpp */
 
 
-#include "stdafx.h"
+//#include "stdafx.h"
 #include <cstdlib>
 #undef MAINFUNCTION
 #include "CommonHeader.h"
@@ -11,7 +11,7 @@ using namespace std;
 int SaveResults() {
 	ofstream result, dchange;
 
-	string rname = PathFile + ".res";
+	string rname = PathFile + "_result.txt";
 	// Set exceptions to be thrown on failure
 	result.exceptions(ofstream::failbit | ofstream::badbit);
 	/// 1.) opening and writing data to result file (....res)

@@ -73,9 +73,7 @@ int DXFWriteTube(ostream& outData, const _tube& iTube,  unsigned long long& hand
 			iTube.RadiusBend*1e3, iTube.Nx, iTube.Ny, iTube.Nz,
 			iTube.OCSStartAngle, iTube.OCSEndAngle);
 		if (error) return error;
-		double EndAngle = iTube.OCSEndAngle;
-		if (fabs(EndAngle) < 1e-3) EndAngle = 360.;
-		double OCSMidAngle = (iTube.OCSStartAngle + EndAngle) / 2.;
+		double OCSMidAngle = (iTube.OCSStartAngle + iTube.OCSEndAngle) / 2.;
 		_point WCSMidPoint = OCS2WCS(iTube.OCSCenterX, iTube.OCSCenterY, iTube.OCSCenterZ,
 			iTube.Nx, iTube.Ny, iTube.Nz, iTube.RadiusBend*1e3, OCSMidAngle);
 		PointMidX = WCSMidPoint.xCoord;

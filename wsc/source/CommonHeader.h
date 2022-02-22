@@ -745,6 +745,9 @@ public:
 * \param [in] rhoW density of saturated water [kg/m3]
 * \param [in] rhoS density of saturated steam [kg/m3]
 * \param [in] SurfTens surface tension at outlet [N/m]
+* \param [in] HeightRatio ratio of height to length of tube, i.e. sin(angle to horizontal)
+* \param [in] VoidFractionHomogeneous in iteration constant 
+* \param [in] UsG superficial gas velocity [m/s] in iteration constant
 * \param [out] VoidFraction void fraction [-]
 * \return mixture density [kg/m3]
 * \author Rainer_Jordan@<very, very warm>mail.com
@@ -753,7 +756,8 @@ public:
 * \date   September 2021
     */
     double Density_Rouhani(double x, double rhoW, double rhoS, double SurfTens, double& VoidFraction );
-    double Gomez(double x, double rhoW, double rhoS, double SurfTens, double VoidFractionInput);
+    double Gomez(double x, double rhoW, double rhoS, double SurfTens, double VoidFractionInput,
+       double HeightRatio, double VoidFractionHomogeneous, double UsG);
 
 /*!
 * \brief calculates the dynamic pressure difference according to Becker

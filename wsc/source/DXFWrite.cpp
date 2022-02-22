@@ -100,7 +100,7 @@ extern _point OCS2WCS(double OCSCenterX, double OCSCenterY, double OCSCenterZ,
 		zExtMin = fmin(iPoint.zCoord, zExtMin);
 	}
 	height = (zExtMax - zExtMin) / 100.;
-	outData << "999\nDXF2WC\n  0\nSECTION\n  2\nCLASSES\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n";
+	outData << "999\nWSC\n  0\nSECTION\n  2\nCLASSES\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n";
 	switch (mode) {
 	case ShowMode::TubesPoints:
 		for (const auto& iTube : Tubes) {
@@ -193,13 +193,7 @@ extern _point OCS2WCS(double OCSCenterX, double OCSCenterY, double OCSCenterZ,
 					PointMidZ = (PtIn->zCoord + PtOut->zCoord) / 2.;
 				}
 				else { // bend
-					if (iTube.OCSEndAngle - iTube.OCSStartAngle < 0.) {
-						 OCSMidAngle = (iTube.OCSStartAngle + iTube.OCSEndAngle+360.) / 2.;
-						if (OCSMidAngle > 360.) OCSMidAngle -= 360.;
-					}
-					else {
-						 OCSMidAngle = (iTube.OCSStartAngle + iTube.OCSEndAngle) / 2.;
-					}
+					OCSMidAngle = (iTube.OCSStartAngle + iTube.OCSEndAngle) / 2.;
 					_point WCSMidPoint = OCS2WCS(iTube.OCSCenterX, iTube.OCSCenterY, iTube.OCSCenterZ,
 							iTube.Nx, iTube.Ny, iTube.Nz, iTube.RadiusBend, OCSMidAngle);
 					PointMidX = WCSMidPoint.xCoord;
