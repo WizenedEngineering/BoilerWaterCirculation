@@ -65,7 +65,7 @@ int DXFWrite(ostream& outData,
 	outData << "999\nDXF2WC\n  0\nSECTION\n  2\nCLASSES\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n";
 
 	for (iTb = 0; iTb <= mTb; iTb++) {
-		LayerName = "Tb " + iTb;
+		LayerName = "Tb " + to_string(iTb);
 		iTube = &Tubes[iTb];
 		PtIn = &Points[iTube->PointIn];
 		PtOut = &Points[iTube->PointOut];
@@ -95,9 +95,9 @@ int DXFWrite(ostream& outData,
 			PointMidY = WCSMidPoint.yCoord;
 			PointMidZ = WCSMidPoint.zCoord;
 		}
-		dx = PtIn->xCoord - PtOut->xCoord;
-		dy = PtIn->yCoord - PtOut->yCoord;
-		dz = PtIn->zCoord - PtOut->zCoord;
+		dx = PtOut->xCoord - PtIn->xCoord;
+		dy = PtOut->yCoord - PtIn->yCoord;
+		dz = PtOut->zCoord - PtIn->zCoord;
 
 		error = DXFWriteArrow(outData, handle, color,
 			PointMidX, PointMidY, PointMidZ, dx, dy, dz);
@@ -105,7 +105,7 @@ int DXFWrite(ostream& outData,
 			PointMidX, PointMidY, PointMidZ, height, content);
 	}
 	for (iPt = 0; iPt <= mPt; iPt++) {
-		LayerName = "Pt " + iPt;
+		LayerName = "Pt " + to_string(iPt);
 		error = DXFWritePoint(outData, handle, LayerName, color,
 			Points[iPt].xCoord,
 			Points[iPt].yCoord,
