@@ -50,7 +50,8 @@ int DXFWriteTube(ostream& outData, const _tube& iTube,  unsigned long long& hand
 	const string& LayerName, unsigned short color, bool writeArrow) {
 	double PointMidX,
 	PointMidY,
-	PointMidZ ;
+	PointMidZ,
+		OCSMidAngle;
 
    double dx, dy, dz;
 
@@ -58,7 +59,7 @@ int DXFWriteTube(ostream& outData, const _tube& iTube,  unsigned long long& hand
 	_point* PtIn = &Points[iTube.PointIn];
 	_point* PtOut= &Points[iTube.PointOut];
 
-	if (iTube.RadiusBend < 1e-3) {
+	if (iTube.RadiusBend < 1e-3) { //straight tube
 		error = DXFWriteLine(outData, handle, LayerName, color,
 			PtIn->xCoord, PtIn->yCoord, PtIn->zCoord,
 			PtOut->xCoord, PtOut->yCoord, PtOut->zCoord);
@@ -67,13 +68,19 @@ int DXFWriteTube(ostream& outData, const _tube& iTube,  unsigned long long& hand
 		PointMidY = (PtIn->yCoord + PtOut->yCoord) / 2.;
 		PointMidZ = (PtIn->zCoord + PtOut->zCoord) / 2.;
 	}
-	else {
+	else { //bend
 		error = DXFWriteArc(outData, handle, LayerName, color,
 			iTube.OCSCenterX, iTube.OCSCenterY, iTube.OCSCenterZ,
 			iTube.RadiusBend*1e3, iTube.Nx, iTube.Ny, iTube.Nz,
 			iTube.OCSStartAngle, iTube.OCSEndAngle);
 		if (error) return error;
-		double OCSMidAngle = (iTube.OCSStartAngle + iTube.OCSEndAngle) / 2.;
+		if (iTube.OCSEndAngle - iTube.OCSStartAngle < 0.) {
+			OCSMidAngle = (iTube.OCSStartAngle + iTube.OCSEndAngle + 360.) / 2.;
+			if (OCSMidAngle > 360.) OCSMidAngle -= 360.;
+		}
+		else {
+			OCSMidAngle = (iTube.OCSStartAngle + iTube.OCSEndAngle) / 2.;
+		}
 		_point WCSMidPoint = OCS2WCS(iTube.OCSCenterX, iTube.OCSCenterY, iTube.OCSCenterZ,
 			iTube.Nx, iTube.Ny, iTube.Nz, iTube.RadiusBend*1e3, OCSMidAngle);
 		PointMidX = WCSMidPoint.xCoord;

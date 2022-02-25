@@ -29,7 +29,7 @@
  * \param mode what should be shown in .dxf file
  * \return int error
  */
-#include "stdafx.h"
+//#include "stdafx.h"
 #undef MAINFUNCTION
 #include "CommonHeader.h"
 
@@ -193,16 +193,22 @@ extern _point OCS2WCS(double OCSCenterX, double OCSCenterY, double OCSCenterZ,
 					PointMidZ = (PtIn->zCoord + PtOut->zCoord) / 2.;
 				}
 				else { // bend
-					OCSMidAngle = (iTube.OCSStartAngle + iTube.OCSEndAngle) / 2.;
+					if (iTube.OCSEndAngle - iTube.OCSStartAngle < 0.) {
+						OCSMidAngle = (iTube.OCSStartAngle + iTube.OCSEndAngle + 360.) / 2.;
+						if (OCSMidAngle >= 360.) OCSMidAngle -= 360.;
+					}
+					else {
+						OCSMidAngle = (iTube.OCSStartAngle + iTube.OCSEndAngle) / 2.;
+					}
 					_point WCSMidPoint = OCS2WCS(iTube.OCSCenterX, iTube.OCSCenterY, iTube.OCSCenterZ,
 							iTube.Nx, iTube.Ny, iTube.Nz, iTube.RadiusBend, OCSMidAngle);
 					PointMidX = WCSMidPoint.xCoord;
 					PointMidY = WCSMidPoint.yCoord;
 					PointMidZ = WCSMidPoint.zCoord;
 				}
-				dx = PtIn->xCoord - PtOut->xCoord;
-				dy = PtIn->yCoord - PtOut->yCoord;
-				dz = PtIn->zCoord - PtOut->zCoord;
+				dx = PtOut->xCoord - PtIn->xCoord;
+				dy = PtOut->yCoord - PtIn->yCoord;
+				dz = PtOut->zCoord - PtIn->zCoord;
 
 				error = DXFWriteArrow(outData, handle, color,
 						PointMidX, PointMidY, PointMidZ, dx, dy, dz);
