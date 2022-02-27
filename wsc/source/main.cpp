@@ -71,7 +71,7 @@ int main(int argc, char** argv) {
 //	PathFile = "..\\..\\WSCDATA\\" + Project + "\\" + Project;
 	PathFile = "WSCDATA\\" + Project + "\\" + Project;
 	protname = PathFile + ".pro";
-	cout << protname;
+//	cout << protname;
 	// Set exceptions to be thrown on failure
 	prot.exceptions(ofstream::failbit | ofstream::badbit);
 
@@ -82,6 +82,7 @@ int main(int argc, char** argv) {
 		cerr << protname << " : " << e.code().message() << endl;
 		exit(1);
 	}
+	FileNames.push_back(protname);
 
 	/**
 	 * This is the main program to call the different functions.
@@ -301,16 +302,27 @@ int main(int argc, char** argv) {
 			dchange << iBranch.Number << "\t" << iBranch.NoChanges << endl;
 		}
 	}
+	FileNames.push_back(cname);
+
 	dchange.close();
 	if (maxg) {
 		cout << "\n successful iteration" << endl;
 		prot << "\n successful iteration" << endl;
+		prot.close();
+		cout << "Delete the intermediate/temporary files (y/n)? ";
+		cin >> answer;
+		if (answer != 'n') {
+			for (const auto& iFileName : FileNames) {
+//				cout << iFileName<<"\n";
+				remove(iFileName.c_str());
+      	}
+		}
 	}
 	else {
 		cout << "\n iteration not converging" << endl;
 		prot << "\n iteration not converging max. iterations: " << Base.maxit << " iterations:  " << Base.iterg << endl;
+		prot.close();
 	}
-	prot.close();
 
 	return 0;
 } /* MAIN__ */

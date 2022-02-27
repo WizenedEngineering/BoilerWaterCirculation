@@ -80,6 +80,12 @@ EXTERN size_t mNd; // max index of nodes (number of nodes - 1)
 EXTERN string PathFile;
 
 /*!
+\var vector FileNames
+\brief vector of all file names produced during calculation, to be called for deletion
+*/
+EXTERN vector<string> FileNames;
+
+/*!
 \var ofstream prot;
 \brief file handle for protocol file 
 

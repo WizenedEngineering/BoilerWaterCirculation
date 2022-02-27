@@ -1,4 +1,4 @@
-//#include "stdafx.h"
+#include "stdafx.h"
 #undef MAINFUNCTION
 #include "CommonHeader.h"
 /*!
@@ -31,9 +31,11 @@ int Print2dxf(ShowMode mode) {
 		break;
 	case ShowMode::Flow:
 		writefile = PathFile + "Flow" + to_string(Base.iterg) + ".dxf";
+		FileNames.push_back(writefile);
 		break;
 	case ShowMode::Arrows:
 		writefile = PathFile + "step" + to_string(Base.iterg) + ".dxf";
+		FileNames.push_back(writefile);
 		break;
 	case ShowMode::SafetyFactor:
 		writefile = PathFile + "_result_safety.dxf";

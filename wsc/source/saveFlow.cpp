@@ -11,7 +11,7 @@
  *********************************************************************/
 
 
-//#include "stdafx.h"
+#include "stdafx.h"
 #undef MAINFUNCTION
 #include "CommonHeader.h"
 
@@ -30,13 +30,18 @@ int saveFlow() {
 	else {
 		for (const auto& iBranch : Branches) {
 			if (iBranch.NoChanges % 2) {
-				outData << iBranch.Number << "    " << -iBranch.g << "\n";
+				outData << iBranch.Number << "    " << -iBranch.g //<< " dynLin " << iBranch.dPLinear << " dPConstant "
+					//<< iBranch.dPConstant << " gNew " << iBranch.gNew << " dpdyn " << iBranch.dPdyn << " dpstat " << iBranch.dPstat 
+					<< "\n";
 			}
 			else {
-				outData << iBranch.Number << "    " << iBranch.g << "\n";
+				outData << iBranch.Number << "    " << iBranch.g //<< " dynLin " << iBranch.dPLinear << " dPConstant "
+					//<< iBranch.dPConstant << " gNew " << iBranch.gNew << " dpdyn " << iBranch.dPdyn << " dpstat " << iBranch.dPstat 
+					<< "\n";
 			}
 		}
 		outData.close();
+		FileNames.push_back(writefile);
 	}//file opened correctly
 	return (0);
 }
